@@ -49,7 +49,8 @@ public class ItemDragBehaviour : MonoBehaviour
     {
         RaycastHit hit = new RaycastHit();
         Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
-        bool isHit = Physics.Raycast(ray, out hit);
+        int layerMask = LayerMask.GetMask("Items");
+        bool isHit = Physics.Raycast(ray, out hit, 100000f, layerMask);
         if (isHit)
         {
             if (hit.collider.gameObject.tag == "Pickable")

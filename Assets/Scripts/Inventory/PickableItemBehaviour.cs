@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(Collider))]
@@ -23,8 +24,9 @@ public class PickableItemBehaviour : MonoBehaviour
 
     public void PickUp()
     {
-        itemCollider.enabled = false;
-        mesh.enabled = false;
+        //itemCollider.enabled = false;
+        //mesh.enabled = false;
+        Debug.Log("Caught inventory event");
     }
 
     public void Drop()
