@@ -12,13 +12,11 @@ public class ItemDragBehaviour : MonoBehaviour
     Vector3 initialMousePosition;
     Vector3 initialRigidbodyPosition;
 
-    // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!playerCamera)
@@ -50,7 +48,7 @@ public class ItemDragBehaviour : MonoBehaviour
         RaycastHit hit = new RaycastHit();
         Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
         int layerMask = LayerMask.GetMask("Items");
-        bool isHit = Physics.Raycast(ray, out hit, 100000f, layerMask);
+        bool isHit = Physics.Raycast(ray, out hit, 100f, layerMask);
         if (isHit)
         {
             if (hit.collider.gameObject.tag == "Pickable")
