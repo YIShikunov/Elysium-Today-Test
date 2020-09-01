@@ -9,8 +9,6 @@ using UnityEngine.Networking;
 [RequireComponent(typeof(Collider))]
 public class PickableItemBehaviour : MonoBehaviour
 {
-    
-
     private struct InventoryAction
     {
         public ItemInfo target;
@@ -46,10 +44,10 @@ public class PickableItemBehaviour : MonoBehaviour
 
     public void PickUp(InventoryBehaviour inventory)
     {
-        //itemCollider.enabled = false;
         //mesh.enabled = false;
         Debug.Log("Caught inventory event");
         StartCoroutine(SendAction(inventory.info, ActionType.Add));
+        //itemCollider.enabled = false;
     }
 
     public void Drop(InventoryBehaviour inventory)
@@ -66,7 +64,6 @@ public class PickableItemBehaviour : MonoBehaviour
         string json = JsonUtility.ToJson(action);
         UnityWebRequest request = UnityWebRequest.Post(host, json);
         request.SetRequestHeader("auth", "\"BMeHG5xqJeB4qCjpuJCTQLsqNGaqkfB6\"");
-        Debug.Break();
         yield return request.SendWebRequest();
         if (request.isNetworkError || request.isHttpError)
         {
@@ -74,7 +71,6 @@ public class PickableItemBehaviour : MonoBehaviour
         }
         else
         {
-            Debug.Break();
             Debug.Log(request.downloadHandler.text);
         }
     }
