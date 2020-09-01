@@ -12,12 +12,14 @@ public class ItemDragBehaviour : MonoBehaviour
     Vector3 initialMousePosition;
     Vector3 initialRigidbodyPosition;
 
+    private PickableItemBehaviour pickable;
+
     void Start()
     {
         
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (!playerCamera)
         {
@@ -26,9 +28,23 @@ public class ItemDragBehaviour : MonoBehaviour
         if (Input.GetMouseButtonDown(0)) //TODO: Change to Input System for event-based inputs. This works as a quick prototype
         {
             dragginigRigidbody = RaycastRigidbodyFromMousePointer();
+            if (dragginigRigidbody)
+            {
+                pickable = dragginigRigidbody.gameObject.GetComponent<PickableItemBehaviour>();
+                if (pickable)
+                {
+                    pickable.dragging = true;
+                }
+            }
+
         }
         if (Input.GetMouseButtonUp(0) && !(dragginigRigidbody is null))
         {
+            if (pickable)
+            {
+                pickable.dragging = false;
+                pickable = null;
+            }
             dragginigRigidbody = null;
         }
     }
@@ -45,13 +61,12 @@ public class ItemDragBehaviour : MonoBehaviour
 
     Rigidbody RaycastRigidbodyFromMousePointer()
     {
-        RaycastHit hit = new RaycastHit();
         Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
         int layerMask = LayerMask.GetMask("Items");
-        bool isHit = Physics.Raycast(ray, out hit, 100f, layerMask);
+        bool isHit = Physics.Raycast(ray, out RaycastHit hit, 100f, layerMask);
         if (isHit)
         {
-            if (hit.collider.gameObject.tag == "Pickable")
+            if (hit.collider.gameObject.CompareTag("Pickable"))
             {
                 distanceToRigidbody = Vector3.Distance(ray.origin, hit.point);
                 initialMousePosition = playerCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, distanceToRigidbody));

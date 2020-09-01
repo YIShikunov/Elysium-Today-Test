@@ -5,6 +5,16 @@ using UnityEngine.Events;
 
 public class AddInventoryEvent : UnityEvent<InventoryBehaviour>
 {
+    public new void AddListener(UnityAction<InventoryBehaviour> call)
+    {
+        Debug.Log("Subscribed to Inventory");
+        base.AddListener(call);
+    }
+    public new void RemoveListener(UnityAction<InventoryBehaviour> call)
+    {
+        Debug.Log("Unsubscribed from Inventory");
+        base.RemoveListener(call);
+    }
 }
 
 public class InventoryBehaviour : MonoBehaviour
@@ -12,10 +22,10 @@ public class InventoryBehaviour : MonoBehaviour
 
     public AddInventoryEvent AddToInventory;
     public ItemInfo info = new ItemInfo { id = "1234123", itemName = "Cylinder", type = "backpack" };
-    private bool drawGUI;
+    [HideInInspector] public bool drawGUI;
     private string guiName;
 
-    private List<PickableItemBehaviour> inventory;
+    public List<PickableItemBehaviour> inventory;
 
     void Start()
     {
@@ -35,8 +45,7 @@ public class InventoryBehaviour : MonoBehaviour
     {
         var pickable = other.gameObject.GetComponent<PickableItemBehaviour>();
         if (!(pickable is null))
-        {
-            Debug.Log("Subscribed to Inventory");
+        {   
             AddToInventory.AddListener(pickable.PickUp);
             drawGUI = true;
             guiName = pickable.info.itemName;
@@ -48,7 +57,6 @@ public class InventoryBehaviour : MonoBehaviour
         var pickable = other.gameObject.GetComponent<PickableItemBehaviour>();
         if (!(pickable is null))
         {
-            Debug.Log("Unsubscribed to Inventory");
             AddToInventory.RemoveListener(pickable.PickUp);
             drawGUI = false;
         }
@@ -64,4 +72,11 @@ public class InventoryBehaviour : MonoBehaviour
         }
     }
 
+    private void OnMouseDown()
+    {
+        if (inventory.Count > 0)
+        {
+            inventory[inventory.Count - 1].Drop(this);
+        }
+    }
 }

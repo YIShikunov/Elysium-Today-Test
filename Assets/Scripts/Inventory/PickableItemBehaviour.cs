@@ -32,29 +32,43 @@ public class PickableItemBehaviour : MonoBehaviour
     [SerializeField] public Texture previewTexture;
 
     private MeshRenderer mesh;
-
+    private Rigidbody rb;
     private Collider itemCollider;
+
+    public bool dragging = false;
 
     void Start()
     {
         itemCollider = gameObject.GetComponent<Collider>();
         mesh = gameObject.GetComponent<MeshRenderer>();
+        rb = gameObject.GetComponent<Rigidbody>();
         gameObject.tag = itemTag;
     }
 
     public void PickUp(InventoryBehaviour inventory)
     {
-        //mesh.enabled = false;
-        Debug.Log("Caught inventory event");
+        if (!dragging)
+        {
+            return;
+        }
         StartCoroutine(SendAction(inventory.info, ActionType.Add));
-        //itemCollider.enabled = false;
+        itemCollider.enabled = false;
+        rb.isKinematic = true;
+        mesh.enabled = false;
+        gameObject.transform.SetParent(inventory.transform.parent.transform);
+        inventory.AddToInventory.RemoveListener(PickUp);
+        inventory.inventory.Add(this);
+        inventory.drawGUI = false;
     }
 
     public void Drop(InventoryBehaviour inventory)
     {
+        StartCoroutine(SendAction(inventory.info, ActionType.Remove));
         itemCollider.enabled = true;
         mesh.enabled = true;
-        StartCoroutine(SendAction(inventory.info, ActionType.Remove));
+        rb.isKinematic = false;
+        gameObject.transform.SetParent(null);
+        inventory.inventory.Remove(this);
     }
 
     IEnumerator SendAction(ItemInfo source, ActionType type)
